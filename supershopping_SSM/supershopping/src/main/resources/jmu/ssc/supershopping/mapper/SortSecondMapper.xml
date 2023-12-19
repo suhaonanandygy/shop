@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace绑定一个Mapper接口-->
+<mapper namespace="jmu.ssc.supershopping.mapper.SortSecondMapper">
+
+    <resultMap id="BaseResultMap" type="jmu.ssc.supershopping.pojo.Product">
+        <id column="product_id" property="product_id" jdbcType="INTEGER" />
+        <result column="product_name" property="product_name" jdbcType="VARCHAR" />
+        <result column="product_originalprice" property="product_originalprice" jdbcType="DOUBLE" />
+        <result column="product_specialprice" property="product_specialprice" jdbcType="DOUBLE" />
+        <result column="product_image" property="product_image" jdbcType="VARCHAR" />
+        <result column="product_popular" property="product_popular" jdbcType="INTEGER" />
+        <result column="product_date" property="product_date" jdbcType="TIMESTAMP" />
+        <result column="product_sort" property="product_sort" jdbcType="INTEGER" />
+    </resultMap>
+
+    <select id="findProductBySortSecond" resultMap="BaseResultMap">
+        SELECT * FROM product p,sortsecond s2 WHERE s2.sortsecond_id= p.product_sort AND
+                                                    s2.sortsecond_id= #{arg0}  limit #{arg1},#{arg2}
+    </select>
+
+    <!-- 查询一级分类下商品的总数 -->
+    <select id="countProductBySortsecond_id" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM product p,sortsecond s2 WHERE
+             s2.`sortsecond_id`= p.`product_sort` AND s2.`sortsecond_id`=#{value}
+    </select>
+
+</mapper>

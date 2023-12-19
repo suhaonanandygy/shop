@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <properties resource="db.properties"/>
+
+    <settings>
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="autoMappingBehavior" value="PARTIAL"/>
+        <setting name="autoMappingUnknownColumnBehavior" value="WARNING"/>
+        <setting name="mapUnderscoreToCamelCase" value="false"/>
+        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
+    </settings>
+
+    <typeAliases>
+        <!-- 给单个类指定别名-->
+        <typeAlias type="jmu.ssc.supershopping.pojo.User" alias="user"></typeAlias>
+        <!--给一个包下的所有类指定别名，默认为类名首字母小写-->
+        <package name="jmu.ssc.supershopping.pojo"/>
+
+    </typeAliases>
+
+    <!--配置分页助手插件-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageHelper">
+            <property name="dialect" value="mysql"/>
+        </plugin>
+    </plugins>
+
+    <!--加载映射文件-->
+    <mappers>
+        <!--指定接口所在的包-->
+        <package name="jmu.ssc.supershopping.mapper"/>
+    </mappers>
+
+</configuration>

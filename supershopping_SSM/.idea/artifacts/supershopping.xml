@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="supershopping">
+    <output-path>$PROJECT_DIR$</output-path>
+    <root id="archive" name="supershopping.war">
+      <element id="artifact" artifact-name="supershopping:war" />
+      <element id="dir-copy" path="$PROJECT_DIR$/supershopping/web/products" />
+      <element id="artifact" artifact-name="supershopping:war exploded" />
+    </root>
+  </artifact>
+</component>

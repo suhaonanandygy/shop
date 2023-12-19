@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jmu.ssc.supershopping.mapper.OrderMapper">
+    <resultMap id="BaseResultMap" type="jmu.ssc.supershopping.pojo.Order">
+        <id column="order_id" property="order_id" jdbcType="VARCHAR" />
+        <result column="order_totalprice" property="order_totalprice" jdbcType="DOUBLE" />
+        <result column="order_state" property="order_state" jdbcType="INTEGER" />
+        <result column="order_receiveaddr" property="order_receiveaddr" jdbcType="VARCHAR" />
+        <result column="order_receivephone" property="order_receivephone" jdbcType="VARCHAR" />
+        <result column="order_time" property="order_time" jdbcType="TIMESTAMP" />
+        <result column="order_uid" property="order_uid" jdbcType="INTEGER" />
+        <result column="order_accepter" property="order_accepter" jdbcType="VARCHAR" />
+
+    </resultMap>
+
+    <resultMap type="order" id="OrderByUidAndPage">
+        <id column="order_id" property="order_id" jdbcType="VARCHAR" />
+        <result column="order_totalprice" property="order_totalprice" jdbcType="DOUBLE" />
+        <result column="order_state" property="order_state" jdbcType="INTEGER" />
+        <result column="order_receiveaddr" property="order_receiveaddr" jdbcType="VARCHAR" />
+        <result column="order_receivephone" property="order_receivephone" jdbcType="VARCHAR" />
+        <result column="order_time" property="order_time" jdbcType="TIMESTAMP" />
+        <result column="order_uid" property="order_uid" jdbcType="INTEGER" />
+        <result column="order_accepter" property="order_accepter" jdbcType="VARCHAR" />
+        <collection property="oiList" ofType="jmu.ssc.supershopping.pojo.OrderItem">
+            <id column="orderitem_id" property="orderitem_id" jdbcType="INTEGER" />
+            <result column="orderitem_count" property="orderitem_count" jdbcType="INTEGER" />
+            <result column="orderitem_unitprice" property="orderitem_unitprice" jdbcType="DOUBLE" />
+            <result column="orderitem_pid" property="orderitem_pid" jdbcType="INTEGER" />
+            <result column="orderitem_oid" property="orderitem_oid" jdbcType="VARCHAR" />
+            <association property="product" javaType="jmu.ssc.supershopping.pojo.Product">
+                <id column="product_id" property="product_id" jdbcType="INTEGER" />
+                <result column="product_name" property="product_name" jdbcType="VARCHAR" />
+                <result column="product_specialprice" property="product_specialprice" jdbcType="DOUBLE" />
+                <result column="product_image" property="product_image" jdbcType="VARCHAR" />
+            </association>
+        </collection>
+    </resultMap>
+
+   <!-- 根据用户名查询用户订单信息-->
+    <select id="findAllOrderByUid" parameterType="int" resultMap="OrderByUidAndPage">
+        SELECT *
+        FROM (SELECT * FROM `order` o,orderitem oi,product p
+              WHERE o.order_id = oi.orderitem_oid AND oi.orderitem_pid = p.product_id and o.order_uid=#{arg0})
+                 temp LIMIT #{arg1},#{arg2}
+    </select>
+
+    <!-- 根据订单号查询订单信息-->
+    <select id="findAllOrderByOid" parameterType="String" resultMap="OrderByUidAndPage">
+        SELECT * FROM `order` o,orderitem oi,product p
+        WHERE o.order_id = oi.orderitem_oid AND oi.orderitem_pid = p.product_id AND o.order_id = #{oid}
+    </select>
+
+    <select id="countAllOrders" parameterType="int" resultType="int">
+        SELECT count(*) FROM `order`
+    </select>
+
+    <select id="countOrdersByState" parameterType="int" resultType="int">
+        SELECT count(*) FROM `order` WHERE `order`.order_state=#{value}
+    </select>
+
+
+    <select id="findAllOrderByStateAndPage" parameterType="int"
+            resultMap="OrderByUidAndPage">
+        SELECT *
+        FROM (SELECT *
+              FROM `order` o,orderitem oi,product p
+              WHERE o.order_id = oi.orderitem_oid AND oi.orderitem_pid = p.product_id and o.order_state=#{arg0}) temp
+            LIMIT #{arg1},#{arg2}
+    </select>
+
+    <select id="findAllOrderByPage" parameterType="int"
+            resultMap="OrderByUidAndPage">
+        SELECT *
+        FROM (SELECT *
+              FROM `order` o,orderitem oi,product p
+              WHERE o.order_id = oi.orderitem_oid AND oi.orderitem_pid = p.product_id) temp
+            LIMIT #{arg0},#{arg1}
+    </select>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from `order`
+        where order_id = #{order_id,jdbcType=INTEGER}
+    </delete>
+
+
+</mapper>

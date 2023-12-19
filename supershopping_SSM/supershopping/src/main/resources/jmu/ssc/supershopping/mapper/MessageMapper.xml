@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="jmu.ssc.supershopping.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="jmu.ssc.supershopping.pojo.Message">
+        <id column="message_id" property="message_id" jdbcType="INTEGER" />
+        <result column="message_contents" property="message_contents" jdbcType="VARCHAR" />
+        <result column="message_date" property="message_date" jdbcType="VARCHAR" />
+        <result column="message_uid" property="message_uid" jdbcType="INTEGER" />
+        <association property="user" javaType="jmu.ssc.supershopping.pojo.User">
+            <id column="user_id" property="user_id" jdbcType="INTEGER" />
+            <result column="user_name" property="user_name" jdbcType="VARCHAR" />
+            <result column="user_password" property="user_password" jdbcType="VARCHAR" />
+            <result column="user_realname" property="user_realname" jdbcType="VARCHAR" />
+            <result column="user_Email" property="user_Email" jdbcType="VARCHAR" />
+            <result column="user_phone" property="user_phone" jdbcType="VARCHAR" />
+            <result column="user_address" property="user_address" jdbcType="VARCHAR" />
+
+        </association>
+    </resultMap>
+    <sql id="Base_Column_List">
+        message_id, message_contents, message_date, message_uid
+    </sql>
+
+    <!-- countAllMessage -->
+    <select id="countAllMessage" parameterType="int" resultType="int">
+        SELECT count(*) FROM Message
+    </select>
+
+    <select id="findAllMessageByPage" parameterType="int"
+            resultMap="BaseResultMap">
+        SELECT * FROM message,`user` WHERE message.message_uid = `user`.user_id
+        order by message.message_id DESC LIMIT #{arg0},#{arg1}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from Message
+        where message_id = #{message_id,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="jmu.ssc.supershopping.pojo.Message"
+            useGeneratedKeys="true" keyProperty="message_id">
+        insert into Message (message_id, message_contents, message_date, message_uid)
+        values
+            (#{message_id,jdbcType=INTEGER},
+             #{message_contents,jdbcType=VARCHAR},
+             #{message_date,jdbcType=VARCHAR},
+             #{message_uid,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" parameterType="jmu.ssc.supershopping.pojo.Message">
+        insert into Message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="message_id != null">
+                message_id,
+            </if>
+            <if test="message_contents != null">
+                message_contents,
+            </if>
+            <if test="message_date != null">
+                message_date,
+            </if>
+            <if test="message_uid != null">
+                message_uid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="message_id != null">
+                #{message_id,jdbcType=INTEGER},
+            </if>
+            <if test="message_contents != null">
+                #{message_contents,jdbcType=VARCHAR},
+            </if>
+            <if test="message_date != null">
+                #{message_date,jdbcType=VARCHAR},
+            </if>
+            <if test="message_uid != null">
+                #{message_uid,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+</mapper>

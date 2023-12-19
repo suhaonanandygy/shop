@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+
+    <!--关联外部db.properties-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+
+    <!--配置dbcp数据源-->
+    <bean id="dataSource"  class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${mysql_driverClassName}"/>
+        <property name="url" value="${mysql_url}"/>
+        <property name="username" value="${mysql_username}"/>
+        <property name="password" value="${mysql_password}"/>
+    </bean>
+
+
+    <!--配置mybatis的sqlSessionFactory-->
+    <bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据源-->
+        <property name="dataSource" ref="dataSource"/>
+
+        <!--绑定mybatis的核心配置文件,注意：在web环境下，需要在路径前加上classpath-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+
+    <!--配置dao接口扫描包，动态实现dao接口对象注入到spring容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入sqlSessionFactory，注意用的是value属性，而不是ref-->
+        <property name="sqlSessionFactoryBeanName" value="sessionFactory"/>
+        <!--指定要扫描的dao包-->
+        <property name="basePackage" value="jmu.ssc.supershopping.mapper"/>
+    </bean>
+
+    <bean  id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <!--aop 事务-->
+
+</beans>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace绑定一个Mapper接口-->
+<mapper namespace="jmu.ssc.supershopping.mapper.SortFirstMapper">
+    <resultMap type="sortFirst" id="SortFirstAndSecond">
+        <id column="sortsecond_sortfid" property="sortfirst_id"/>
+        <id column="sortfirst_name" property="sortfirst_name"/>
+
+        <collection property="csList" ofType="jmu.ssc.supershopping.pojo.SortSecond">
+            <id column="sortsecond_id" property="sortsecond_id"/>
+            <result column="sortsecond_name" property="sortsecond_name"/>
+            <result column="sortsecond_sortfid" property="sortsecond_sortfid"/>
+        </collection>
+    </resultMap>
+
+    <!--查看商品的一级分类和二级分类目录-->
+    <select id="findSortFirstAndSortSecond" resultMap="SortFirstAndSecond">
+        SELECT * FROM sortfirst s1,sortsecond s2 WHERE s2.sortsecond_sortfid = s1.sortfirst_id
+    </select>
+
+
+    <resultMap id="BaseResultMap" type="jmu.ssc.supershopping.pojo.Product">
+        <id column="product_id" property="product_id" jdbcType="INTEGER" />
+        <result column="product_name" property="product_name" jdbcType="VARCHAR" />
+        <result column="product_originalprice" property="product_originalprice" jdbcType="DOUBLE" />
+        <result column="product_specialprice" property="product_specialprice" jdbcType="DOUBLE" />
+        <result column="product_image" property="product_image" jdbcType="VARCHAR" />
+        <result column="product_popular" property="product_popular" jdbcType="INTEGER" />
+        <result column="product_date" property="product_date" jdbcType="TIMESTAMP" />
+        <result column="product_sort" property="product_sort" jdbcType="INTEGER" />
+    </resultMap>
+
+    <!--查询一级分类下所有的商品 -->
+    <select id="findProductBySortfirst_id" parameterType="int" resultMap="BaseResultMap">
+        select p.* from product p ,sortfirst s,sortsecond s2 where p.product_sort=s2.sortsecond_id
+                                                               and s2.sortsecond_sortfid=s.sortfirst_id and s.sortfirst_id= #{arg0}
+            limit #{arg1},#{arg2}
+    </select>
+
+    <!-- 查询一级分类下商品的总数 -->
+    <select id="countProductBySortfirst_id" parameterType="int" resultType="int">
+        SELECT COUNT(*) FROM product p,sortfirst s,sortsecond s2 WHERE
+            s.`sortfirst_id`= s2.`sortsecond_sortfid` AND s2.`sortsecond_id`= p.`product_sort` AND s.`sortfirst_id`=#{value}
+    </select>
+
+</mapper>
